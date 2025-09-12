@@ -67,7 +67,9 @@ import vanilla_muffins_image from "./vanilla_muffins_image.png";
 import quinoa_image from "./quinoa_image.png";
 import brown_rice_image from "./brown_rice_image.png";
 import barley_image from "./barley_image.png";
-
+import message_image from "./message_image.png";
+import reviews from "./reviews.png";
+import wishlist_icon from "./wishlist.png";
 export const assets = {
   logo,
   search_icon,
@@ -94,6 +96,9 @@ export const assets = {
   main_banner_bg_sm,
   add_address_image,
   box_icon,
+  message_image,
+  reviews,
+  wishlist_icon,
 };
 
 export const categories = [
@@ -145,54 +150,27 @@ export const footerLinks = [
   {
     title: "Quick Links",
     links: [
-      { text: "Home", url: "#" },
-      { text: "Best Sellers", url: "#" },
-      { text: "Offers & Deals", url: "#" },
-      { text: "Contact Us", url: "#" },
-      { text: "FAQs", url: "#" },
+      { text: "Home", url: "/" },
+      { text: "All Products", url: "/products" },
+      { text: "Offers & Deals", url: "/products" },
+      { text: "Contact Us", url: "/contact" },
+      { text: "FAQs", url: "/contact" },
     ],
   },
   {
     title: "Need help?",
     links: [
-      { text: "Delivery Information", url: "#" },
-      { text: "Return & Refund Policy", url: "#" },
-      { text: "Payment Methods", url: "#" },
-      { text: "Track your Order", url: "#" },
-      { text: "Contact Us", url: "#" },
+      { text: "Return & Refund Policy", url: "/contact" },
+      { text: "Contact Us", url: "/contact" },
     ],
   },
   {
     title: "Follow Us",
     links: [
-      { text: "Instagram", url: "#" },
-      { text: "Twitter", url: "#" },
-      { text: "Facebook", url: "#" },
-      { text: "YouTube", url: "#" },
+      { text: "Instagram", url: "https://www.instagram.com/" },
+      { text: "Twitter", url: "https://twitter.com/" },
+      { text: "Facebook", url: "https://www.facebook.com/" },
     ],
-  },
-];
-
-export const features = [
-  {
-    icon: delivery_truck_icon,
-    title: "Fastest Delivery",
-    description: "Groceries delivered in under 30 minutes.",
-  },
-  {
-    icon: leaf_icon,
-    title: "Freshness Guaranteed",
-    description: "Fresh produce straight from the source.",
-  },
-  {
-    icon: coin_icon,
-    title: "Affordable Prices",
-    description: "Quality groceries at unbeatable prices.",
-  },
-  {
-    icon: trust_icon,
-    title: "Trusted by Thousands",
-    description: "Loved by 10,000+ happy customers.",
   },
 ];
 
@@ -539,9 +517,9 @@ export const dummyProducts = [
     offerPrice: 520,
     image: [basmati_rice_image],
     description: [
-      "Long grain and aromatic",
-      "Perfect for biryani and pulao",
-      "Premium quality",
+      "Aromatic and long-grain",
+      "Perfect for biryanis and pulao",
+      "Rich in nutrients",
     ],
     createdAt: "2025-08-25T07:17:46.018Z",
     updatedAt: "2025-08-25T07:18:13.103Z",

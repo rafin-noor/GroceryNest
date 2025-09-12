@@ -1,32 +1,50 @@
 import { useAppContext } from '../../context/AppContext';
-import {assests} from "../../assets/assets";
+import {assets} from "../../assets/assets";
 import { NavLink, Outlet, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
+
 const SellerLayout = () => {
-    
-    const {setIsseller} = useAppContext();
+
+    const {axios,navigate,setIsSeller} = useAppContext();
 
     const sidebarLinks = [
-        { name: "Add Product", path: "/seller", icon: assests.add_icon },
-        { name: "Product List", path: "/seller/product-list", icon: assests.product_list_icon},
-        { name: "Orders", path: "/seller/orders", icon: assests.order_icon },
+        { name: "Add Product", path: "/seller", icon: assets.add_icon },
+        { name: "Product List", path: "/seller/product-list", icon: assets.product_list_icon},
+        { name: "Orders", path: "/seller/orders", icon: assets.order_icon },
+        { name: "Reviews", path: "/seller/reviews", icon: assets.reviews }, 
+        { name: "Chat", path: "/seller/chat", icon: assets.message_image},
     ];
     const logout = async()=>{
-        setIsseller(false);
+        try {
+            const{data} = await axios.get('/api/seller/logout');
+            if(data.success){
+                toast.success(data.message)
+                setIsSeller(false);
+                navigate('/')
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
-
+   
     return (
         <>
             <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white">
                 <Link to='/'>
-                   <img src={assests.logo} alt="logo" className="cursor-pointer w-34 md:w-38" />
+                   <img src={assets.logo} alt="logo" className="cursor-pointer w-34 md:w-38" />
                 </Link>
                 <div className="flex items-center gap-5 text-gray-500">
                     <p>Hi! Admin</p>
-                    <button onClick={logout} className='border rounded-full text-sm px-4 py-1'>Logout</button>
+                    <button onClick={logout} className="border border-[var(--color-primary)] text-[var(--color-primary)] px-5 py-2 rounded-full hover:bg-[var(--color-primary)] hover:text-white transition">
+                        Logout
+                    </button>
+
                 </div>
             </div>
             <div className='flex'>
-               <div className="md:w-64 w-16 border-r h-[550px] text-base border-gray-300 pt-4 flex flex-col transition-all duration-300">
+               <div className="md:w-64 w-16 border-r h-[95vh] text-base border-gray-300 pt-4 flex flex-col ">
                 {sidebarLinks.map((item) => (
                     <NavLink to={item.path} key={item.name} end= {item.path === "/seller"}
                         className={({isActive})=>`flex items-center py-3 px-4 gap-3 
@@ -35,7 +53,7 @@ const SellerLayout = () => {
                             }`
                         }
                     >
-                        <img src={item.icon} alt="" className="w-7 h-7" />
+                        <img src={item.icon} alt={item.name} className="w-6 h-6 " />
                         <p className="md:block hidden text-center">{item.name}</p>
                     </NavLink>
                 ))}

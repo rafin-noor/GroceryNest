@@ -15,7 +15,7 @@ export const sellerlogin = async (req,res)=>{
               sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
               maxAge: 7 * 24 * 60 * 60 * 1000,
             });
-            return res.json({ success: ture, message: 'Logged In Succefully' });
+            return res.json({ success: true, message: 'Logged In Succefully' });
 
         }else{
           return res.json({ success: false, message: "Invalid Email or Password"});
@@ -38,11 +38,11 @@ export const isSellerAuth = async (req, res) => {
     }
 };
 
-// logout seller-/api/seller/logout
+// logout seller: /api/seller/logout
 
 export const sellerlogout = async (req, res) => {
     try {
-        res.clearCookie('sellertoken', {
+        res.clearCookie('sellerToken', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
@@ -53,3 +53,4 @@ export const sellerlogout = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
+

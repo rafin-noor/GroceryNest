@@ -68,7 +68,7 @@ export const login = async (req, res) => {
 // Check authentication
 export const isAuth = async (req, res) => {
     try {
-        const userId = req.userId;   // ✅ comes from auth middleware
+        const userId = req.userId;   //  comes from auth middleware
         const user = await User.findById(userId).select("-password");
         return res.json({ success: true, user });
     } catch (error) {

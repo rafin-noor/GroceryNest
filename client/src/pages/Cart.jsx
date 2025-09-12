@@ -9,15 +9,13 @@ const Cart = () => {
     const [selectedAddress, setSelectedAddress] = useState(null)
     const [paymentOption, setPaymentOption] = useState("COD")
     const[cartArray,setCartArray] = useState([])
-
+    const [bkashNumber, setBkashNumber] = useState("");
+    const [bkashPin, setBkashPin] = useState("");
+    
     const getCart = () => {
         let tempArray = [];
         for (const key in cartItems){
           const product = products.find((item) => item._id === key);
-          if (!product) {
-            console.warn(`Product not found for cart key: ${key}`);
-            continue; // Skip missing products
-          }
           product.quantity = cartItems[key];
           tempArray.push(product);
         }
@@ -50,9 +48,10 @@ const Cart = () => {
             if (paymentOption ==="COD"){
                 const {data} = await axios.post('/api/order/cod',{
                     userId: user._id,
-                    items: cartArray.map(item=>({
+                    items: cartArray.map(item => ({
                         product: item._id,
                         quantity: item.quantity,
+                        price: item.offerPrice > 0 ? item.offerPrice : item.price
                     })),
                     address: selectedAddress._id
                 })
@@ -64,7 +63,44 @@ const Cart = () => {
                     toast.error(data.message)
                 }
             }
-            
+            // Place order with Online Payment (bKash)
+            else if (paymentOption === "Online") {
+                if (!bkashNumber || !bkashPin) {
+                    return toast.error("Enter bKash number & PIN.");
+                }
+
+                // Frontend format check
+                const bkashNumberRegex = /^01\d{9}$/;
+                const bkashPinRegex = /^\d{5}$/;
+
+                if (!bkashNumberRegex.test(bkashNumber)) {
+                    return toast.error("Enter a valid 11-digit bKash number starting with 01.");
+                }
+                if (!bkashPinRegex.test(bkashPin)) {
+                    return toast.error("Enter a valid 5-digit bKash PIN.");
+                }
+
+                const { data } = await axios.post('/api/order/online', {
+                    userId: user._id,
+                    items: cartArray.map(item => ({
+                        product: item._id,
+                        quantity: item.quantity,
+                        price: item.offerPrice > 0 ? item.offerPrice : item.price
+                    })),
+                    address: selectedAddress._id,
+                    bkashNumber,
+                    bkashPin,
+                });
+
+                if (data.success) {
+                   toast.success(data.message);
+                   setCartItems({});
+                   navigate('/my-orders');
+                } else {
+                    toast.error(data.message);
+                }
+            }
+                        
         } catch (error) {
             toast.error(error.message)
             
@@ -113,20 +149,22 @@ const Cart = () => {
                             <div>
                                 <p className="hidden md:block font-semibold">{product.name}</p>
                                 <div className="font-normal text-gray-500/70">
-                                    <p>Weight: <span>{product.weight || "N/A"}</span></p>
+                                  <p>Weight: <span>{product.weight ? product.weight : "N/A"}</span></p>
                                     <div className='flex items-center'>
-                                        <p>Qty:</p>
-                                        <select onChange={e=>updateCartItem(product._id, Number(e.target.value))} 
-                                        value={cartItems[product._id]} className='outline-none'>
-                                            {Array(cartItems[product.id]>9? cartItems[product._id]: 9).fill('').map((_, index) => (
-                                                <option key={index} value={index + 1}>{index + 1}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
+                                     <p>Qty:</p>
+                                     <select onChange={e => updateCartItem(product._id, Number(e.target.value))}
+                                     value={cartItems[product._id]} className='outline-none'>
+                                        {Array(cartItems[product._id] > 9 ? cartItems[product._id] : 9).fill('').map((_, index) => (
+                                           <option key={index} value={index + 1}>{index + 1}</option>
+                                        ))}
+                                    </select>
+                                   </div>
+                           </div>
                             </div>
                         </div>
-                        <p className="text-center">{currency}{product.offerPrice * product.quantity}</p>
+                        <p className="text-center">
+                           {currency}{(product.offerPrice > 0 ? product.offerPrice : product.price) * product.quantity}
+                        </p>
                         <button onClick={()=>removeFromCart(product._id)} className="cursor-pointer mx-auto">
                           <img src={assets.remove_icon} alt="remove" className="inline-block w-6 h-6" />
                         </button>
@@ -175,6 +213,24 @@ const Cart = () => {
                         <option value="COD">Cash On Delivery</option>
                         <option value="Online">Online Payment</option>
                     </select>
+                    {paymentOption === "Online" && (
+                      <div className="mt-4 space-y-3">
+                        <input
+                          type="text"
+                          placeholder="Enter bKash Number"
+                          value={bkashNumber}
+                          onChange={(e) => setBkashNumber(e.target.value)}
+                          className="w-full border border-gray-300 px-3 py-2 rounded"
+                        />
+                        <input
+                          type="password"
+                          placeholder="Enter bKash PIN"
+                          value={bkashPin}
+                          onChange={(e) => setBkashPin(e.target.value)}
+                          className="w-full border border-gray-300 px-3 py-2 rounded"
+                        />
+                     </div>
+                    )}
                 </div>
 
                 <hr className="border-gray-300" />
@@ -182,17 +238,19 @@ const Cart = () => {
                 <div className="text-gray-500 mt-4 space-y-2">
                     <p className="flex justify-between">
                         <span>Price</span><span>{currency}{getcartamount()}</span>
+                    </p>{/* Delivery charge (fixed 50 for now) */}
+                    <p className="flex justify-between">
+                       <span>Delivery Charge</span><span>{currency}50</span>
                     </p>
                     <p className="flex justify-between">
-                        <span>Shipping Fee</span><span className="text-green-600">Free</span>
+                       <span>Tax (2%)</span><span>{currency}{(getcartamount() * 0.02).toFixed(2)}</span>
                     </p>
-                    <p className="flex justify-between">
-                        <span>Tax (2%)</span><span>{currency}{getcartamount() * 0.02}</span>
-                    </p>
+
                     <p className="flex justify-between text-lg font-medium mt-3">
-                        <span>Total Amount:</span><span>
-                            {currency}{getcartamount() + (getcartamount() * 0.02)}
-                        </span>
+                      <span>Total Amount:</span>
+                      <span>
+                        {currency}{(getcartamount() + (getcartamount() * 0.02) + 50)}
+                      </span>
                     </p>
                 </div>
 

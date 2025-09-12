@@ -12,7 +12,7 @@ const MainBanner = () => {
           className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-center md:text-left 
           max-w-2xl leading-snug lg:leading-tight tracking-tight 
           bg-gradient-to-r from-[#4fbf57] to-[#4dae44] bg-clip-text text-transparent">
-           GroceryNest – Buy Good , Live Better.
+           GroceryNest – Buy Good,Live Better.
         </h1>
 
       <div className='flex items-center mt-6 font-medium'>
@@ -31,5 +31,5 @@ const MainBanner = () => {
   )
 }
 
-export default MainBanner
+export default MainBanner;
 

@@ -4,7 +4,7 @@ import User from '../models/user.js';
 export const updateCart = async (req, res) => {
     try {
         const { cartItems } = req.body;
-        const userId = req.userId;   // ✅ take from middleware, not req.body
+        const userId = req.userId;   //take from middleware, not req.body
 
         if (!userId) {
             return res.json({ success: false, message: "User not authorized" });

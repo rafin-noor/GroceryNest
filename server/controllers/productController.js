@@ -4,7 +4,7 @@ import Product from '../models/product.js';
 // Add Product: /api/product/add
 export const addProduct = async (req, res) => {
     try {
-        let productData = JSON.parse(req.body.productData); // fixed typo
+        let productData = JSON.parse(req.body.productData);
 
         const images = req.files;
 
@@ -15,7 +15,11 @@ export const addProduct = async (req, res) => {
             })
         );
 
-        await Product.create({ ...productData, image: images_url });
+        await Product.create({ 
+            ...productData, 
+            image: images_url,
+            sellerId: process.env.seller_email // Add sellerId when creating product
+        });
 
         res.json({ success: true, message: "Product Added" });
 
@@ -68,3 +72,25 @@ export const changeStock = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
+
+// Migration utility: Update products without sellerId
+export const updateProductsWithSellerId = async (req, res) => {
+    try {
+        // Update all products that don't have sellerId
+        const result = await Product.updateMany(
+            { sellerId: { $exists: false } },
+            { $set: { sellerId: process.env.seller_email } }
+        );
+        
+        res.json({ 
+            success: true, 
+            message: `Updated ${result.modifiedCount} products with sellerId`,
+            modifiedCount: result.modifiedCount
+        });
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+

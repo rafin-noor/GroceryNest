@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useAppContext } from '../context/AppContext'
-import { dummyOrders } from '../assets/assets'
-
+// import { dummyOrders } from '../assets/assets'
 
 const MyOrders = () => {
     const [myOrders,setMyOrders]= useState([])
@@ -10,22 +9,20 @@ const MyOrders = () => {
     const fetchMyOrders = async()=>{
       try {
         const {data} = await axios.get('/api/order/user')
-        console.log("Fetched Orders:", data);
         if (data.success){
           setMyOrders(data.orders)
         }
-        
       } catch (error) {
         console.log(error);
-        
       }
     }
     useEffect(()=>{
-      if(user){
-         fetchMyOrders()
+      if (user){
+        fetchMyOrders()
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[user])
+    
   return (
     <div className='mt-14 pb-16'>
         <div className='flex flex-col items-end w-max mb-8'>
@@ -38,7 +35,9 @@ const MyOrders = () => {
                 md:font-medium max-md:flex-col'>
                     <span>OrderId: {order._id}</span>
                     <span>Payment: {order.paymentType}</span>
-                    <span>Total Amount: {currency}{order.amount}</span>
+                    <span>Subtotal + Tax: {currency}{order.amount}</span>
+                    <span>Delivery: {currency}{order.deliveryCharge}</span>
+                    <span>Grand Total: {currency}{order.grandTotal}</span>
                 </p>
                 {order.items.map((item,index)=>(
                     <div key={index} className={`relative bg-white text-gray-500/70 ${order.items.length!==index+1 && "border-b"}
@@ -58,7 +57,7 @@ const MyOrders = () => {
                         <p>Date:{new Date(order.createdAt).toLocaleDateString()}</p>
                       </div>
                       <p className='text-[var(--color-primary)] text-lg font-medium'>
-                        Amount: {currency}{item.product.offerPrice*item.quantity}
+                        Amount: {currency}{(item.product.offerPrice > 0 ? item.product.offerPrice : item.product.price) * item.quantity}
                       </p>
                     </div>
                 ))}
@@ -69,7 +68,8 @@ const MyOrders = () => {
   )
 }
 
-export default MyOrders;
+export default MyOrders;  
+
 
 
 

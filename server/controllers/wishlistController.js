@@ -41,12 +41,11 @@ export const removeFromWishlist = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
-
-// Get wishlist for logged-in user
+// Get user's wishlist
 export const getWishlist = async (req, res) => {
     try {
         const userId = req.userId;
-        let wishlist = await Wishlist.findOne({ userId });
+        let wishlist = await Wishlist.findOne({ userId }).populate('products');
         if (!wishlist) wishlist = { products: [] };
 
         res.json({ success: true, products: wishlist.products });
@@ -55,3 +54,6 @@ export const getWishlist = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
+
+
+

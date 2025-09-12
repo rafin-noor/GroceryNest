@@ -6,7 +6,7 @@ const ProductCard = ({ product }) => {
     const { currency, addToCart, removeFromCart, cartItems, navigate,
             wishlistProducts, addToWishlist, removeFromWishlist, user } = useAppContext();
 
-    const isWishlisted = wishlistProducts.includes(product._id);
+    const isWishlisted = wishlistProducts.some(w => w._id === product._id);
 
     return product && (
         <div
@@ -42,12 +42,18 @@ const ProductCard = ({ product }) => {
             {/* Price & Actions */}
             <div className="flex items-center justify-between mt-3">
                 <div className="flex flex-col">
-                    <span className="text-[var(--color-primary)] font-semibold md:text-xl text-base">
-                        {currency}{product.offerPrice}
-                        <span className="line-through text-gray-400 text-xs md:text-sm ml-1">
+                    {product.offerPrice > 0 ? (
+                        <span className="text-[var(--color-primary)] font-semibold md:text-xl text-base">
+                            {currency}{product.offerPrice}
+                            <span className="line-through text-gray-400 text-xs md:text-sm ml-1">
+                                {currency}{product.price}
+                            </span>
+                        </span>
+                    ) : (
+                        <span className="text-[var(--color-primary)] font-semibold md:text-xl text-base">
                             {currency}{product.price}
                         </span>
-                    </span>
+                    )}
                 </div>
 
                 <div onClick={(e) => e.stopPropagation()} className="flex flex-col gap-2">
@@ -73,19 +79,19 @@ const ProductCard = ({ product }) => {
                        <button
                           onClick={() => isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product._id)}
                           className={`text-sm px-3 py-2 rounded-xl border font-medium transition flex items-center justify-center gap-1 ${
-                           isWishlisted? "text-[var(--color-primary)]-500 border-green-500 bg-green-50 hover:bg-green-100"
-                           : "text-[var(--color-primary)] border-[var(--color-primary)] hover:bg-[var(--color-primary)]/10"
-                    }`}
+                           isWishlisted
+                             ? "text-[var(--color-primary)]-500 border-green-500 bg-green-50 hover:bg-green-100"
+                             : "text-[var(--color-primary)] border-[var(--color-primary)] hover:bg-[var(--color-primary)]/10"
+                          }`}
                        >
-                    {isWishlisted ? "★ Saved" : "☆ Save"}
-                    </button>
+                          {isWishlisted ? "★ Saved" : "☆ Save"}
+                       </button>
                     )}
-
                 </div>
             </div>
         </div>
     );
 };
 
-export default ProductCard;                                                                                                                            
+export default ProductCard;
 

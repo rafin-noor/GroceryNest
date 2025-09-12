@@ -9,7 +9,7 @@ const authuser = (req, res, next)=> {
     try {
         const tokenDecode = jwt.verify(token, process.env.JWT_SECRET);
         if (tokenDecode.id){
-            req.userId = tokenDecode.id;   // ✅ attach to req.userId
+            req.userId = tokenDecode.id;   // attach to req.userId
         } else {
             return res.json({ success: false, message: "Not Authorized" });
         }

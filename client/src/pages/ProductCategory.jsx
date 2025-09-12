@@ -7,7 +7,7 @@ const ProductCategory = () => {
     const{products} = useAppContext()
     const {category} = useParams()
     const searchcategory = categories.find((item) => item.path.toLocaleLowerCase() === category)
-    const filteredProducts = products.filter((product) => product.category.toLocaleLowerCase() === category)
+    const filteredProducts = products.filter((product) => product.category.toLocaleLowerCase() === category && product.inStock)
   return (
     <div className='mt-16'>
       {searchcategory &&(
