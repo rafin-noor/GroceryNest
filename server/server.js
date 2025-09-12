@@ -17,7 +17,7 @@ import reviewRouter from './routes/reviewRoute.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
-const allowedOrigins=['https://grocerynest-frontend.onrender.com']
+const allowedOrigins=['http://localhost:5173']
 
 await connectDB();
 await connectCloudinary();
